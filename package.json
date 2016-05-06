@@ -1,0 +1,26 @@
+{
+  "name": "mqtt-433mhz-bridge",
+  "version": "1.0.0",
+  "description": "Translates MQTT messages to 433mhz radio signals",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/syntax-workshops/mqtt-433mhz-bridge.git"
+  },
+  "keywords": [
+    "mqtt",
+    "433mhz"
+  ],
+  "author": "Mathijs Bernson",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/syntax-workshops/mqtt-433mhz-bridge/issues"
+  },
+  "homepage": "https://github.com/syntax-workshops/mqtt-433mhz-bridge#readme",
+  "dependencies": {
+    "mqtt": "^1.10.0"
+  }
+}
