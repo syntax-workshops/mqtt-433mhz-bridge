@@ -12,18 +12,14 @@ using namespace std;
 
 namespace nodekaku {
 
-using v8::Exception;
-using v8::FunctionCallbackInfo;
-using v8::Isolate;
-using v8::Local;
-using v8::Number;
-using v8::Object;
-using v8::String;
-using v8::Value;
-
-const char* ToCString(const String::Utf8Value& value) {
-  return *value ? *value : "<string conversion failed>";
-}
+	using v8::Exception;
+	using v8::FunctionCallbackInfo;
+	using v8::Isolate;
+	using v8::Local;
+	using v8::Number;
+	using v8::Object;
+	using v8::String;
+	using v8::Value;
 
 	void Broadcast(const FunctionCallbackInfo<Value>& args) {
 		Isolate* isolate = args.GetIsolate();
@@ -39,41 +35,37 @@ const char* ToCString(const String::Utf8Value& value) {
 		// Check the argument types
 		if (!args[0]->IsString() || !args[1]->IsNumber() || !args[2]->IsBoolean()) {
 			isolate->ThrowException(Exception::TypeError(
-						String::NewFromUtf8(isolate, "Wrong argument types")));
+						String::NewFromUtf8(isolate, "Wrong argument types; should be: broadcast(string address, number device, boolean state)")));
 			return;
 		}
 
-
-
 		int pin_out = 15; // Pin out using wiringPi pin numbering scheme (15 = TxD / BCM GPIO 14, see https://projects.drogon.net/raspberry-pi/wiringpi/pins/)
+
+		// Arguments
 		int device = args[1]->NumberValue();
 		String::Utf8Value address_str(args[0]);
 		char address = (*address_str)[0];
 		bool state = args[2]->BooleanValue();
 
-		//printf("device %i, address %c, state %d\n", device, address, state);
+		// setup pin and make it low
+		pinMode(pin_out, OUTPUT);
+		digitalWrite(pin_out, LOW);
+		KaKuTransmitter kaKuSwitch(pin_out);
 
-
-    // setup pin and make it low
-	pinMode(pin_out, OUTPUT);
-	digitalWrite(pin_out, LOW);
-	KaKuTransmitter kaKuSwitch(pin_out);
-	
-	kaKuSwitch.sendSignal(address, device, state);
+		kaKuSwitch.sendSignal(address, device, state);
 	}
 
 	void Init(Local<Object> exports) {
 
-	if(wiringPiSetup() == -1)
-	{
-		Isolate* isolate = Isolate::GetCurrent();
+		if(wiringPiSetup() == -1)
+		{
+			Isolate* isolate = Isolate::GetCurrent();
 			isolate->ThrowException(Exception::TypeError( String::NewFromUtf8(isolate, "WiringPi setup failed. Maybe you haven't installed it yet?")));
 			return;
-	}
+		}
 		NODE_SET_METHOD(exports, "broadcast", Broadcast);
 	}
 
 	NODE_MODULE(nodekaku, Init)
-
 }
 

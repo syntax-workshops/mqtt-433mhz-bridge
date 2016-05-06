@@ -1,5 +1,4 @@
 var mqtt   = require('mqtt');
-var client = mqtt.connect('mqtt://test.mosquitto.org');
 var config = require('./config');
 
 var mqttUri     = 'mqtt://' + config.mqtt.hostname + ':' + config.mqtt.port;
@@ -21,13 +20,12 @@ client.on('message', function (topic, message) {
 		throw 'Invalid message';
 	}
 
+	console.log("Broadcasting:", address, device, state);
 	kaku.broadcast(address, device, state);
-	console.log("sending:", address, device, state);
 });
 
 client.on('connect', function () {
 	// Subscribe on everything in the MQTT namespace
 	client.subscribe(config.mqtt.namespace + '/#');
-	console.log("subscribing to:", config.mqtt.namespace + '/#');
-
+	console.log("Subscribed to topic:", config.mqtt.namespace + '/#');
 });
