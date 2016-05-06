@@ -43,12 +43,6 @@ const char* ToCString(const String::Utf8Value& value) {
 			return;
 		}
 
-	if(wiringPiSetup() == -1)
-	{
-			isolate->ThrowException(Exception::TypeError(
-						String::NewFromUtf8(isolate, "WiringPi setup failed. Maybe you haven't installed it yet?")));
-			return;
-	}
 
 
 		int pin_out = 15; // Pin out using wiringPi pin numbering scheme (15 = TxD / BCM GPIO 14, see https://projects.drogon.net/raspberry-pi/wiringpi/pins/)
@@ -69,6 +63,13 @@ const char* ToCString(const String::Utf8Value& value) {
 	}
 
 	void Init(Local<Object> exports) {
+
+	if(wiringPiSetup() == -1)
+	{
+		Isolate* isolate = Isolate::GetCurrent();
+			isolate->ThrowException(Exception::TypeError( String::NewFromUtf8(isolate, "WiringPi setup failed. Maybe you haven't installed it yet?")));
+			return;
+	}
 		NODE_SET_METHOD(exports, "broadcast", Broadcast);
 	}
 
