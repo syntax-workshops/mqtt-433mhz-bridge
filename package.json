@@ -15,7 +15,7 @@
     "433mhz"
   ],
   "author": "Mathijs Bernson",
-  "license": "MIT",
+  "license": "GPLv3",
   "bugs": {
     "url": "https://github.com/syntax-workshops/mqtt-433mhz-bridge/issues"
   },
