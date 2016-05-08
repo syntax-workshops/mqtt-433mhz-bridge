@@ -6,11 +6,12 @@
 #include <unistd.h>
 #include <ctype.h>
 #include <iostream>
-#include "RemoteTransmitter.cpp"
+#include "RemoteSwitch.cpp"
 
 using namespace std;
 
 namespace nodekaku {
+	const int pin_out = 15; // Pin out using wiringPi pin numbering scheme (15 = TxD / BCM GPIO 14, see https://projects.drogon.net/raspberry-pi/wiringpi/pins/)
 
 	using v8::Exception;
 	using v8::FunctionCallbackInfo;
@@ -39,7 +40,6 @@ namespace nodekaku {
 			return;
 		}
 
-		int pin_out = 15; // Pin out using wiringPi pin numbering scheme (15 = TxD / BCM GPIO 14, see https://projects.drogon.net/raspberry-pi/wiringpi/pins/)
 
 		// Arguments
 		int device = args[1]->NumberValue();
@@ -47,10 +47,8 @@ namespace nodekaku {
 		char address = (*address_str)[0];
 		bool state = args[2]->BooleanValue();
 
-		// setup pin and make it low
-		pinMode(pin_out, OUTPUT);
 		digitalWrite(pin_out, LOW);
-		KaKuTransmitter kaKuSwitch(pin_out);
+		KaKuSwitch kaKuSwitch(pin_out);
 
 		kaKuSwitch.sendSignal(address, device, state);
 	}
@@ -63,6 +61,10 @@ namespace nodekaku {
 			isolate->ThrowException(Exception::TypeError( String::NewFromUtf8(isolate, "WiringPi setup failed. Maybe you haven't installed it yet?")));
 			return;
 		}
+
+		// setup pin and make it low
+		pinMode(pin_out, OUTPUT);
+
 		NODE_SET_METHOD(exports, "broadcast", Broadcast);
 	}
 
