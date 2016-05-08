@@ -42,6 +42,25 @@ void RemoteTransmitter::sendTelegram(unsigned short trits[]) {
 	sendTelegram(encodeTelegram(trits),_pin);
 }
 
+/****************************************************/
+/* Addition 07-02-2015 by W. Pietersz (tweakers.net mouse86)
+ * Quick fix for the new RPI 2... microseconds function does not work correct
+ * for values higher than 100. As stated in the manual, values lower than 100
+ * are hardcoded delays into the wiring lib. So these extra functions below
+ * makes uses of that by limiting the delay calls to microSeconds to less than 100
+ * Btw. I measured 19.90mS delay for 190 microsecond requests. Just in case anyone
+ * wonders. Please forgive me for the odd funcion style, I use C not C++ :-D */     
+void delayMicroseconds_WP(unsigned int uSdelay)
+{
+  while(uSdelay > 99)
+  {
+    uSdelay -= 100;
+    delayMicroseconds(99);
+  }
+  
+  delayMicroseconds(uSdelay);
+}
+
 /**
 * Format data:
 * pppppppp|prrrdddd|dddddddd|dddddddd (32 bit)
@@ -80,33 +99,33 @@ void RemoteTransmitter::sendCode(unsigned short pin, unsigned long code, unsigne
 			switch (code & 3) {
 				case 0:
 					digitalWrite(pin, HIGH);
-					delayMicroseconds(periodusec);
+					delayMicroseconds_WP(periodusec);
 					digitalWrite(pin, LOW);
-					delayMicroseconds(periodusec*3);
+					delayMicroseconds_WP(periodusec*3);
 					digitalWrite(pin, HIGH);
-					delayMicroseconds(periodusec);
+					delayMicroseconds_WP(periodusec);
 					digitalWrite(pin, LOW);
-					delayMicroseconds(periodusec*3);
+					delayMicroseconds_WP(periodusec*3);
 					break;
 				case 1:
 					digitalWrite(pin, HIGH);
-					delayMicroseconds(periodusec*3);
+					delayMicroseconds_WP(periodusec*3);
 					digitalWrite(pin, LOW);
-					delayMicroseconds(periodusec);
+					delayMicroseconds_WP(periodusec);
 					digitalWrite(pin, HIGH);
-					delayMicroseconds(periodusec*3);
+					delayMicroseconds_WP(periodusec*3);
 					digitalWrite(pin, LOW);
-					delayMicroseconds(periodusec);
+					delayMicroseconds_WP(periodusec);
 					break;
 				case 2: // KA: X or float
 					digitalWrite(pin, HIGH);
-					delayMicroseconds(periodusec);
+					delayMicroseconds_WP(periodusec);
 					digitalWrite(pin, LOW);
-					delayMicroseconds(periodusec*3);
+					delayMicroseconds_WP(periodusec*3);
 					digitalWrite(pin, HIGH);
-					delayMicroseconds(periodusec*3);
+					delayMicroseconds_WP(periodusec*3);
 					digitalWrite(pin, LOW);
-					delayMicroseconds(periodusec);
+					delayMicroseconds_WP(periodusec);
 					break;
 			}
 			// Next trit
@@ -115,9 +134,9 @@ void RemoteTransmitter::sendCode(unsigned short pin, unsigned long code, unsigne
 
 		// Send termination/synchronization-signal. Total length: 32 periods
 		digitalWrite(pin, HIGH);
-		delayMicroseconds(periodusec);
+		delayMicroseconds_WP(periodusec);
 		digitalWrite(pin, LOW);
-		delayMicroseconds(periodusec*31);
+		delayMicroseconds_WP(periodusec*31);
 	}
 }
 
