@@ -4,6 +4,9 @@ Node.js program that translates MQTT messages to 433mhz radio broadcasts
 
 ## Installation on Raspberry pi
 
+Use the [`raspberrypi-2` branch](https://github.com/syntax-workshops/mqtt-433mhz-bridge/tree/raspberrypi-2) if you are running on a Rasbperry pi model 2 B.
+That one needs a patched version of the RemoteLights library to work correctly.
+
 ```
 # Install dependencies
 $ sudo apt-get update && sudo apt-get upgrade
